@@ -16,12 +16,12 @@
 
 echo "Setuid files:"
 echo "============="
-find / -type f -executable -perm -4000 -ls 2>/dev/null | sort -k 5
+find / -type f -executable -perm -4000 -ls 2>/dev/null | sort -k 12 | head -n 12
 echo "This is karan thakor "
 # for the task, add
 # commands to display a title
 # commands to make a list of the 12 biggest files
 #to find large files liunx can use find or du command
-find /home/student -xdev -type f -size +100M
+#find /home/student -xdev -type f -size +100M
 # sort/format whatever to display the list properly
-sort sort1.txt
+#sort sort1.txt
