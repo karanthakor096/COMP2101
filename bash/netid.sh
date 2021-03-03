@@ -72,39 +72,43 @@ EOF
 #####
 
 # define the interface being summarized
-for iface in $(ifconfig | cut -d ' ' -f1| tr ':' '\n' | awk NF)
-do
-           printf "$iface%s\n"
+#for iface in $(ifconfig | cut -d ' ' -f1| tr ':' '\n' | awk NF)
+#do
+#           printf "$iface%s\n"
            #declare -a array_test=["$iface"]
-done
-  interface="ens33"
-  [ "$verbose" = "yes" ] && echo "Reporting on interface(s): $interface"
+#done
+int=$(ls /sys/class/net)
+echo -e "This are interface:\n $int"
+for int in $(ifconfig | cut -d ' ' -f1 | tr ':' '\n' | awk NF );do
 
-  [ "$verbose" = "yes" ] && echo "Getting IPV4 address and name for interface $interface"
+  [ "$verbose" = "yes" ] && echo "Reporting on interface(s): $int"
+
+  [ "$verbose" = "yes" ] && echo "Getting IPV4 address and name for interface $int"
   # Find an address and hostname for the interface being summarized
   # we are assuming there is only one IPV4 address assigned to this interface
-  ipv4_address=$(ip a s $interface|awk -F '[/ ]+' '/inet /{print $3}')
+  ipv4_address=$(ip a s $int |awk -F '[/ ]+' '/inet /{print $3}')
   ipv4_hostname=$(getent hosts $ipv4_address | awk '{print $2}')
 
-  [ "$verbose" = "yes" ] && echo "Getting IPV4 network block info and name for interface $interface"
+  [ "$verbose" = "yes" ] && echo "Getting IPV4 network block info and name for interface $int"
   # Identify the network number for this interface and its name if it has one
   # Some organizations have enough networks that it makes sense to name them just like how we name hosts
   # To ensure your network numbers have names, add them to your /etc/networks file, one network to a line, as   networkname networknumber
   #   e.g. grep -q mynetworknumber /etc/networks || (echo 'mynetworkname mynetworknumber' |sudo tee -a /etc/networks)
-  network_address=$(ip route list dev $interface scope link|cut -d ' ' -f 1)
+  network_address=$(ip route list dev $int scope link|cut -d ' ' -f 1)
   network_number=$(cut -d / -f 1 <<<"$network_address")
   network_name=$(getent networks $network_number|awk '{print $1}')
-
+echo "this is the detials of intefaces "
   cat <<EOF
 
-  Interface $interface:
+  Interface $int:
   ===============
   Address         : $ipv4_address
   Name            : $ipv4_hostname
-  Network Address : $network_address
+  Network Address :\ $network_address
   Network Name    : $network_name
 
 EOF
+done
 #####
 # End of per-interface report
 #####
