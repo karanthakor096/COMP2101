@@ -104,7 +104,7 @@ echo "this is the detials of intefaces "
   ===============
   Address         : $ipv4_address
   Name            : $ipv4_hostname
-  Network Address :\ $network_address
+  Network Address : $network_address
   Network Name    : $network_name
 
 EOF
