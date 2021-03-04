@@ -15,47 +15,35 @@
 # Usage:
 #   error-message ["some text to print to stderr"]
 function error-message {
-name name stderr: sysconfig.sh
-$ sh sysconfig.sh 2>>/dev/null #2 is stderror, redirect it to /dev/null
-echo "some errors"
-error-message ['here some errors ']
+echo "some errors while print stderr" >&2
 }
 # This function will send a message to stderr and exit with a failure status
 # Usage:
 #   error-exit ["some text to print to stderr" [exit-status]]
 function error-exit {
-error-exit ["the program is stop due to some error and is going to exit "]
-local error_code="$?"
-test $error_code == 0 && return;
+echo "some error inside the script $?" >&2
 
 }
 #This function displays help information if the user asks for it on the command line or gives us a bad command line
 function displayhelp {
-  echo "some option for help"
-  [[ ( $# == "--help") || $# == "-h" ]]
-  echo "-v  verbose mode"
-  echo "-A show all equivalent to -vET"
-  echo "-n number all output lines"
-
+  echo "for some help option use --help" >&2
 }
 
 # This function will remove all the temp files created by the script
 # The temp files are all named similarly, "/tmp/somethinginfo.$$"
-function temp-file {
+function cleanup {
   temp=/tmp/sysconfig.$$
-  trap 'rm -f $temp' exit
-  echo "removing temporary files "
+  rm -f $temp
+  echo "removed temporary files "
+  exit
 }
-#temp-file
+trap cleanup
 # A trap command is used after the function definition to specify this function is to be run if we get a ^C while running
-trap stop INT
-function stop()
-{
-  echo
-    echo "Ctrl-C by user"
-    # do the jobs
-    exit
-}
+
+#function stop(){
+#        echo "bye bye!"
+#}
+#trap stop SIGIN
 
 # End of section to be done for TASK
 # Remainder of script does not require any modification, but may need to be examined in order to create the functions for TASK
@@ -65,7 +53,7 @@ function stop()
 #This function produces the network configuration for our report
 function getipinfo {
   # reuse our netid.sh script from lab 4
-  netid.sh
+  ./netid.sh
 }
 
 # process command line options
@@ -112,7 +100,7 @@ while [ $# -gt 0 ]; do
       error-exit "$1 is invalid"
       ;;
   esac
-  shift 
+  shift
 done
 
 # gather data into temporary files to reduce time spent running lshw
